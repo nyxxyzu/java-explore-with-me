@@ -11,22 +11,26 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
 
 	@Query(value = " select new ru.practicum.dto.ViewStats(eh.app, eh.uri, count(eh.ip)) from EndpointHit eh " +
 	       " where eh.timestamp between ?1 and ?2" +
-	       " group by eh.app, eh.uri")
+	       " group by eh.app, eh.uri" +
+			" order by count(eh.ip) desc")
 	List<ViewStats> findStatsByStartAndEnd(LocalDateTime start, LocalDateTime end);
 
 	@Query(value = " select new ru.practicum.dto.ViewStats(eh.app, eh.uri, count(eh.ip)) from EndpointHit eh " +
 			" where eh.timestamp between ?1 and ?2 and eh.uri in ?3" +
-	        " group by eh.app, eh.uri")
+	        " group by eh.app, eh.uri" +
+	        " order by count(eh.ip) desc")
 	List<ViewStats> findStatsWithUris(LocalDateTime start, LocalDateTime end, String[] uris);
 
 	@Query(value = " select new ru.practicum.dto.ViewStats(eh.app, eh.uri, count(distinct eh.ip)) from EndpointHit eh " +
 			" where eh.timestamp between ?1 and ?2" +
-			" group by eh.app, eh.uri")
+			" group by eh.app, eh.uri" +
+			" order by count(distinct eh.ip) desc")
 	List<ViewStats> findStatsUniqueIp(LocalDateTime start, LocalDateTime end);
 
 	@Query(value = " select new ru.practicum.dto.ViewStats(eh.app, eh.uri, count(distinct eh.ip)) from EndpointHit eh " +
 			" where eh.timestamp between ?1 and ?2 and eh.uri in ?3" +
-			" group by eh.app, eh.uri")
+			" group by eh.app, eh.uri" +
+			" order by count(distinct eh.ip) desc")
 	List<ViewStats> findStatsUniqueIpWithUris(LocalDateTime start, LocalDateTime end, String[] uris);
 
 
