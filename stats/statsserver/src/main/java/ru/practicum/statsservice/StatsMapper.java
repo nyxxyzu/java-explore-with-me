@@ -1,9 +1,9 @@
 package ru.practicum.statsservice;
 
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import ru.practicum.dto.EndpointHitDto;
 
-@NoArgsConstructor
+@UtilityClass
 public class StatsMapper {
 
 	public static EndpointHit toEndpointHit(EndpointHitDto dto) {

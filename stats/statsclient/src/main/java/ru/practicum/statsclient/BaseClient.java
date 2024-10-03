@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class BaseClient {
 
-	protected final RestTemplate rest;
+	private final RestTemplate rest;
 
 	public BaseClient(RestTemplate rest) {
 		this.rest = rest;
