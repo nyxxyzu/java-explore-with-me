@@ -10,6 +10,13 @@
     </parent>
 
     <artifactId>stats</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>dto</module>
+        <module>stats-client</module>
+        <module>stats-server</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -18,12 +25,6 @@
     </properties>
 
 
-    <packaging>pom</packaging>
 
-    <modules>
-        <module>dto</module>
-        <module>statsclient</module>
-        <module>statsserver</module>
-    </modules>
 
 </project>
