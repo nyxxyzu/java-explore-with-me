@@ -1,11 +1,11 @@
 package ru.practicum;
 
-import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStats;
+import ru.practicum.exception.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +33,9 @@ public class StatsServiceImpl implements StatsService {
 	@Override
 	public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, String[] uris, Boolean unique) {
 		List<ViewStats> stats = new ArrayList<>();
+		if (start == null || end == null) {
+			throw new ValidationException("Start or end cannot be null");
+		}
 		if (start.isAfter(end)) {
 			throw new ValidationException("End cannot be before start");
 		}
