@@ -1,5 +1,6 @@
 package ru.practicum;
 
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,9 @@ public class StatsServiceImpl implements StatsService {
 	@Override
 	public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, String[] uris, Boolean unique) {
 		List<ViewStats> stats = new ArrayList<>();
+		if (start.isAfter(end)) {
+			throw new ValidationException("End cannot be before start");
+		}
 		if (!unique && uris == null) {
 			stats = statsRepository.findStatsByStartAndEnd(start, end);
 		}
