@@ -269,13 +269,13 @@ public class EventServiceImpl implements EventService {
 		}
 		User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
 		Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event " + eventId + " not found"));
-		if (event.getInitiator().getId() == userId) {
+		if (event.getInitiator().getId().equals(userId)) {
 			throw new ConditionsNotMetException("Cannot make a request for your own event");
 		}
 		if (!event.getState().equals(State.PUBLISHED)) {
 			throw new ConditionsNotMetException("Cannot participate in an unpublished event");
 		}
-		if (event.getConfirmedRequests() == event.getParticipantLimit() && event.getParticipantLimit() != 0) {
+		if (event.getConfirmedRequests().equals(event.getParticipantLimit()) && event.getParticipantLimit() != 0) {
 			throw new ConditionsNotMetException("Event has reached a participant limit");
 		}
 		ParticipationRequest request = new ParticipationRequest();
@@ -338,7 +338,7 @@ public class EventServiceImpl implements EventService {
 		List<ParticipationRequest> requests = requestRepository.findByIdIn(dto.getRequestIds());
 		List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
 		List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
-		if (event.getConfirmedRequests() == event.getParticipantLimit()) {
+		if (event.getConfirmedRequests().equals(event.getParticipantLimit())) {
 			throw new ConditionsNotMetException("Event has reached participation limit");
 		}
 		for (ParticipationRequest request : requests) {
