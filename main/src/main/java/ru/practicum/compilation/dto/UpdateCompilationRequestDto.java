@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UpdateCompilationRequest {
+public class UpdateCompilationRequestDto {
 
 	private List<Long> events;
 	private Boolean pinned;

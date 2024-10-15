@@ -40,8 +40,8 @@ public class UserController {
 
 	@GetMapping
 	public List<UserDto> getUsers(@RequestParam(value = "ids", required = false) Long[] users,
-								  @RequestParam(value = "from", defaultValue = "0") int from,
-								  @RequestParam(value = "size", defaultValue = "10") int size) {
+								  @RequestParam(defaultValue = "0") int from,
+								  @RequestParam(defaultValue = "10") int size) {
 		return userService.getUsers(users, from, size);
 	}
 

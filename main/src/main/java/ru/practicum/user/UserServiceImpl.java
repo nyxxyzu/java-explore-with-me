@@ -1,6 +1,8 @@
 package ru.practicum.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.exception.NotFoundException;
@@ -31,7 +33,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public void delete(Long userId) {
-		if (userRepository.findById(userId).isEmpty()) {
+		if (!userRepository.existsById(userId)) {
 			throw new NotFoundException("User with id = " + userId + " was not found");
 		}
 		userRepository.deleteById(userId);
@@ -39,13 +41,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDto> getUsers(Long[] users, int from, int size) {
+		Pageable page = PageRequest.of(from, size);
 		if (users != null) {
-			return userRepository.findUsersByIds(users)
+			return userRepository.findByIdIn(users)
 					.stream()
 					.map(UserMapper::toUserDto)
 					.toList();
 		} else {
-			return userRepository.findUsers(from, size)
+			return userRepository.findAll(page)
 					.stream()
 					.map(UserMapper::toUserDto)
 					.toList();

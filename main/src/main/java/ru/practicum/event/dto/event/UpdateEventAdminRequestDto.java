@@ -1,16 +1,15 @@
 package ru.practicum.event.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import ru.practicum.enums.StateAction;
+import ru.practicum.enums.StateActionAdmin;
 import ru.practicum.event.dto.location.LocationDto;
 
 import java.time.LocalDateTime;
 
 @Data
-public class UpdateEventUserRequest {
+public class UpdateEventAdminRequestDto {
 
 	@Size(min = 20, max = 2000)
 	private String annotation;
@@ -21,10 +20,9 @@ public class UpdateEventUserRequest {
 	private LocalDateTime eventDate;
 	private LocationDto location;
 	private Boolean paid;
-	@Positive
 	private Long participantLimit;
 	private Boolean requestModeration;
-	private StateAction stateAction;
+	private StateActionAdmin stateAction;
 	@Size(min = 3, max = 120)
 	private String title;
 }

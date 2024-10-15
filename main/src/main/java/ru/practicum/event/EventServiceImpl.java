@@ -11,16 +11,16 @@ import ru.practicum.enums.RequestStatus;
 import ru.practicum.enums.Sort;
 import ru.practicum.enums.StateAction;
 import ru.practicum.enums.StateActionAdmin;
-import ru.practicum.event.dto.event.UpdateEventAdminRequest;
-import ru.practicum.event.dto.event.UpdateEventUserRequest;
+import ru.practicum.event.dto.event.UpdateEventAdminRequestDto;
+import ru.practicum.event.dto.event.UpdateEventUserRequestDto;
 import ru.practicum.event.dto.request.ParticipationRequestDto;
 import ru.practicum.enums.State;
 import ru.practicum.event.dto.event.EventDto;
 import ru.practicum.event.dto.EventMapper;
 import ru.practicum.event.dto.event.EventShortDto;
 import ru.practicum.event.dto.event.NewEventRequestDto;
-import ru.practicum.event.dto.request.EventRequestStatusUpdateResult;
-import ru.practicum.event.dto.request.EventUpdateStatusUpdateRequest;
+import ru.practicum.event.dto.request.EventRequestStatusUpdateResultDto;
+import ru.practicum.event.dto.request.EventUpdateStatusUpdateRequestDto;
 import ru.practicum.exception.ConditionsNotMetException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
@@ -63,9 +63,11 @@ public class EventServiceImpl implements EventService {
 		if (dto.getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
 			throw new ValidationException("Event date should be at least 2 hours after the current moment");
 		}
-		User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("User not found"));
 		Location location = locationRepository.save(EventMapper.toLocation(dto.getLocation()));
-		Category category = categoryRepository.findById(dto.getCategory()).orElseThrow(() -> new NotFoundException("Category not found"));
+		Category category = categoryRepository.findById(dto.getCategory())
+				.orElseThrow(() -> new NotFoundException("Category not found"));
 		Event event = EventMapper.toEvent(dto);
 		if (dto.getPaid() == null) {
 			event.setPaid(false);
@@ -88,7 +90,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public List<EventShortDto> getEventsByUserId(Long userId, int from, int size) {
-		if (userRepository.findById(userId).isEmpty()) {
+		if (!userRepository.existsById(userId)) {
 			throw new NotFoundException("User not found");
 		}
 		return eventRepository.getEventByUserId(userId, from, size)
@@ -100,20 +102,22 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public EventDto getEventByUserAndEventId(Long userId, Long eventId) {
-		if (userRepository.findById(userId).isEmpty()) {
+		if (!userRepository.existsById(userId)) {
 			throw new NotFoundException("User not found");
 		}
-		Event event = eventRepository.getEventByUserAndEventId(userId, eventId).orElseThrow(() -> new NotFoundException("Event not found"));
+		Event event = eventRepository.getEventByUserAndEventId(userId, eventId)
+				.orElseThrow(() -> new NotFoundException("Event not found"));
 		return EventMapper.toEventDto(event);
 	}
 
 	@Override
 	@Transactional
-	public EventDto updateEventByUser(UpdateEventUserRequest request, Long userId, Long eventId) {
-		if (userRepository.findById(userId).isEmpty()) {
+	public EventDto updateEventByUser(UpdateEventUserRequestDto request, Long userId, Long eventId) {
+		if (!userRepository.existsById(userId)) {
 			throw new NotFoundException("User not found");
 		}
-		Event oldEvent = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
+		Event oldEvent = eventRepository.findById(eventId)
+				.orElseThrow(() -> new NotFoundException("Event not found"));
 		if (oldEvent.getState() == State.PUBLISHED) {
 			throw new ConditionsNotMetException("Cannot update published events");
 		}
@@ -156,7 +160,7 @@ public class EventServiceImpl implements EventService {
 		if (request.getDescription() != null) {
 			oldEvent.setDescription(request.getDescription());
 		}
-		return EventMapper.toEventDto(eventRepository.save(oldEvent));
+		return EventMapper.toEventDto(oldEvent);
 	}
 
 	@Override
@@ -170,13 +174,15 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	@Transactional
-	public EventDto updateEventByAdmin(UpdateEventAdminRequest request, Long eventId) {
-		Event oldEvent = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
+	public EventDto updateEventByAdmin(UpdateEventAdminRequestDto request, Long eventId) {
+		Event oldEvent = eventRepository.findById(eventId)
+				.orElseThrow(() -> new NotFoundException("Event not found"));
 		if (request.getAnnotation() != null) {
 			oldEvent.setAnnotation(request.getAnnotation());
 		}
 		if (request.getCategory() != null) {
-			oldEvent.setCategory(categoryRepository.findById(request.getCategory()).orElseThrow(() -> new NotFoundException("Category not found")));
+			oldEvent.setCategory(categoryRepository.findById(request.getCategory())
+					.orElseThrow(() -> new NotFoundException("Category not found")));
 		}
 		if (request.getEventDate() != null) {
 			if (request.getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
@@ -220,7 +226,7 @@ public class EventServiceImpl implements EventService {
 		if (request.getDescription() != null) {
 			oldEvent.setDescription(request.getDescription());
 		}
-		return EventMapper.toEventDto(eventRepository.save(oldEvent));
+		return EventMapper.toEventDto(oldEvent);
 
 	}
 
@@ -256,9 +262,10 @@ public class EventServiceImpl implements EventService {
 	@Transactional
 	@Override
 	public EventDto getPublicEventById(Long eventId) {
-		Event event = eventRepository.getPublicEventById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
+		Event event = eventRepository.getPublicEventById(eventId)
+				.orElseThrow(() -> new NotFoundException("Event not found"));
 		event.setViews(getViews(event.getPublishedOn().minusDays(14), event.getPublishedOn().plusDays(14), "/events/" + eventId));
-		return EventMapper.toEventDto(eventRepository.save(event));
+		return EventMapper.toEventDto(event);
 	}
 
 	@Override
@@ -267,8 +274,10 @@ public class EventServiceImpl implements EventService {
 		if (requestRepository.findByRequesterIdAndEventId(userId, eventId).isPresent()) {
 			throw new ConditionsNotMetException("This request already exists");
 		}
-		User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-		Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event " + eventId + " not found"));
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("User not found"));
+		Event event = eventRepository.findById(eventId)
+				.orElseThrow(() -> new NotFoundException("Event " + eventId + " not found"));
 		if (event.getInitiator().getId().equals(userId)) {
 			throw new ConditionsNotMetException("Cannot make a request for your own event");
 		}
@@ -293,7 +302,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public List<ParticipationRequestDto> getRequestsByRequester(Long userId) {
-		if (userRepository.findById(userId).isEmpty()) {
+		if (!userRepository.existsById(userId)) {
 			throw new NotFoundException("User not found");
 		}
 		List<ParticipationRequest> requests = requestRepository.findByRequesterId(userId);
@@ -306,17 +315,18 @@ public class EventServiceImpl implements EventService {
 	@Override
 	@Transactional
 	public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
-		if (userRepository.findById(userId).isEmpty()) {
+		if (!userRepository.existsById(userId)) {
 			throw new NotFoundException("User not found");
 		}
-		ParticipationRequest request = requestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Request not found"));
+		ParticipationRequest request = requestRepository.findById(requestId)
+				.orElseThrow(() -> new NotFoundException("Request not found"));
 		request.setStatus(RequestStatus.CANCELED);
 		return EventMapper.toParticipationDto(requestRepository.save(request));
 	}
 
 	@Override
 	public List<ParticipationRequestDto> getRequestsByEvent(Long userId, Long eventId) {
-		if (userRepository.findById(userId).isEmpty()) {
+		if (!userRepository.existsById(userId)) {
 			throw new NotFoundException("User not found");
 		}
 		List<ParticipationRequest> requests = requestRepository.findByEventId(eventId);
@@ -327,11 +337,12 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	@Transactional
-	public EventRequestStatusUpdateResult changeRequestStatus(EventUpdateStatusUpdateRequest dto, Long userId, Long eventId) {
-		if (userRepository.findById(userId).isEmpty()) {
+	public EventRequestStatusUpdateResultDto changeRequestStatus(EventUpdateStatusUpdateRequestDto dto, Long userId, Long eventId) {
+		if (!userRepository.existsById(userId)) {
 			throw new NotFoundException("User not found");
 		}
-		Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
+		Event event = eventRepository.findById(eventId)
+				.orElseThrow(() -> new NotFoundException("Event not found"));
 		if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
 			throw new ConditionsNotMetException("This event does not require request confirmation");
 		}
@@ -360,7 +371,7 @@ public class EventServiceImpl implements EventService {
 			}
 		}
 		requestRepository.saveAll(requests);
-		EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
+		EventRequestStatusUpdateResultDto result = new EventRequestStatusUpdateResultDto();
 		result.setConfirmedRequests(confirmedRequests);
 		result.setRejectedRequests(rejectedRequests);
 		return result;

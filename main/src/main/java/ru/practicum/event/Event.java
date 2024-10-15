@@ -1,17 +1,22 @@
 package ru.practicum.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +33,14 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedEntityGraph(
+		name = "event-entity-graph",
+		attributeNodes = {
+				@NamedAttributeNode("category"),
+				@NamedAttributeNode("initiator"),
+				@NamedAttributeNode("location"),
+		}
+)
 @Entity
 @Table(name = "events")
 public class Event {
@@ -36,7 +49,8 @@ public class Event {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String annotation;
-	@ManyToOne
+	@ToString.Exclude
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
 	@Column(name = "confirmed_requests")
@@ -46,10 +60,12 @@ public class Event {
 	private String description;
 	@Column(name = "event_date")
 	private LocalDateTime eventDate;
-	@ManyToOne
+	@ToString.Exclude
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "initiator_id")
 	private User initiator;
-	@OneToOne
+	@ToString.Exclude
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "location_id")
 	private Location location;
 	private Boolean paid;
@@ -61,6 +77,8 @@ public class Event {
 	@Column(name = "request_moderation")
 	private Boolean requestModeration;
 	private String title;
+	@Transient
+	@JsonInclude
 	private Long views;
 	@Enumerated(value = EnumType.STRING)
 	private State state;

@@ -2,12 +2,14 @@ package ru.practicum.compilation;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.CompilationMapper;
 import ru.practicum.compilation.dto.NewCompilationDto;
-import ru.practicum.compilation.dto.UpdateCompilationRequest;
+import ru.practicum.compilation.dto.UpdateCompilationRequestDto;
 import ru.practicum.event.Event;
 import ru.practicum.event.EventRepository;
 import ru.practicum.exception.NotFoundException;
@@ -42,7 +44,7 @@ public class CompilationServiceImpl implements CompilationService {
 	@Override
 	@Transactional
 	public void delete(Long compId) {
-		if (compilationRepository.findById(compId).isEmpty()) {
+		if (!compilationRepository.existsById(compId)) {
 			throw new NotFoundException("Compilation not found");
 		}
 		compilationRepository.deleteById(compId);
@@ -50,8 +52,9 @@ public class CompilationServiceImpl implements CompilationService {
 
 	@Override
 	@Transactional
-	public CompilationDto update(UpdateCompilationRequest dto, Long compId) {
-		Compilation compilation = compilationRepository.findById(compId).orElseThrow(() -> new NotFoundException("Compilation not found"));
+	public CompilationDto update(UpdateCompilationRequestDto dto, Long compId) {
+		Compilation compilation = compilationRepository.findById(compId)
+				.orElseThrow(() -> new NotFoundException("Compilation not found"));
 		if (dto.getPinned() != null) {
 			compilation.setPinned(dto.getPinned());
 		}
@@ -67,14 +70,21 @@ public class CompilationServiceImpl implements CompilationService {
 
 	@Override
 	public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
-		return compilationRepository.findByPinned(pinned, from, size).stream()
+		Pageable page = PageRequest.of(from, size);
+		if (pinned == null) {
+			return compilationRepository.findAll(page).stream()
+					.map(CompilationMapper::toCompilationDto)
+					.toList();
+		}
+		return compilationRepository.findByPinnedIs(pinned, page).stream()
 				.map(CompilationMapper::toCompilationDto)
 				.toList();
 	}
 
 	@Override
 	public CompilationDto getCompilationById(Long compId) {
-		Compilation compilation = compilationRepository.findById(compId).orElseThrow(() -> new NotFoundException("Compilation not found"));
+		Compilation compilation = compilationRepository.findById(compId)
+				.orElseThrow(() -> new NotFoundException("Compilation not found"));
 		return CompilationMapper.toCompilationDto(compilation);
 	}
 }

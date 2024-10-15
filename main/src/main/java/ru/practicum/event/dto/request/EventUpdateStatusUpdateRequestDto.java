@@ -7,7 +7,7 @@ import ru.practicum.enums.RequestStatus;
 import java.util.List;
 
 @Data
-public class EventUpdateStatusUpdateRequest {
+public class EventUpdateStatusUpdateRequestDto {
 
 	@NotNull
 	List<Long> requestIds;

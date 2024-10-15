@@ -9,14 +9,14 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-	@Query(value = "select e.* from events as e " +
-			"where e.initiator_id = ?1 " +
+	@Query(value = "select e from Event e " +
+			"where e.initiator.id = ?1 " +
 			"order by e.id " +
-			"limit ?3 offset ?2", nativeQuery = true)
+			"limit ?3 offset ?2")
 	List<Event> getEventByUserId(Long userId, int from, int size);
 
-	@Query(value = "select e.* from events as e " +
-			"where e.initiator_id = ?1 and e.id = ?2 ", nativeQuery = true)
+	@Query(value = "select e from Event e " +
+			"where e.initiator.id = ?1 and e.id = ?2 ")
 	Optional<Event> getEventByUserAndEventId(Long userId, Long eventId);
 
 	@Query(value = "select e from Event e " +

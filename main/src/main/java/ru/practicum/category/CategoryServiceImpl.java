@@ -31,7 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	@Transactional
 	public void delete(Long categoryId) {
-		if (categoryRepository.findById(categoryId).isEmpty()) {
+		if (!categoryRepository.existsById(categoryId)) {
 			throw new NotFoundException("Category with id = " + categoryId + " was not found");
 		}
 		categoryRepository.deleteById(categoryId);
@@ -40,7 +40,8 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	@Transactional
 	public CategoryDto update(NewCategoryRequestDto dto, Long categoryId) {
-		Category oldCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Category with id = " + categoryId + " was not found"));
+		Category oldCategory = categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new NotFoundException("Category with id = " + categoryId + " was not found"));
 		if (dto.getName() != null && !dto.getName().isBlank()) {
 			oldCategory.setName(dto.getName());
 		}
@@ -56,7 +57,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public CategoryDto getCategoryById(Long categoryId) {
-		Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Category with id = " + categoryId + " was not found"));
+		Category category = categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new NotFoundException("Category with id = " + categoryId + " was not found"));
 		return CategoryMapper.toCategoryDto(category);
 	}
 }
