@@ -38,7 +38,7 @@ public class EventControllerPublic {
 	public List<EventShortDto> getPublicEvents(@RequestParam(required = false) @Size(min = 3, max = 500) String text,
 											   @RequestParam(required = false) Long[] categories,
 											   @RequestParam(required = false) Boolean paid,
-											   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam( required = false) LocalDateTime rangeStart,
+											   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime rangeStart,
 											   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime rangeEnd,
 											   @RequestParam(defaultValue = "false") Boolean onlyAvailable,
 											   @RequestParam(required = false) Sort sort,

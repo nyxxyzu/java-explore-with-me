@@ -16,7 +16,6 @@ import ru.practicum.category.CategoryService;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryRequestDto;
 
-import java.util.List;
 
 @RestController
 @Slf4j

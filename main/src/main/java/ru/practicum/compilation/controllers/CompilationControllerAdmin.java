@@ -17,7 +17,6 @@ import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequestDto;
 
-import java.util.List;
 
 @RestController
 @Slf4j
