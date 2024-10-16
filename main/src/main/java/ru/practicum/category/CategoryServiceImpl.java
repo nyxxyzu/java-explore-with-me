@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.CategoryMapper;
 import ru.practicum.category.dto.NewCategoryRequestDto;
+import ru.practicum.event.EventRepository;
+import ru.practicum.exception.ConditionsNotMetException;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.List;
@@ -15,10 +17,12 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
 	private final CategoryRepository categoryRepository;
+	private final EventRepository eventRepository;
 
 	@Autowired
-	public CategoryServiceImpl(CategoryRepository categoryRepository) {
+	public CategoryServiceImpl(CategoryRepository categoryRepository, EventRepository eventRepository) {
 		this.categoryRepository = categoryRepository;
+		this.eventRepository = eventRepository;
 	}
 
 	@Override
@@ -33,6 +37,9 @@ public class CategoryServiceImpl implements CategoryService {
 	public void delete(Long categoryId) {
 		if (!categoryRepository.existsById(categoryId)) {
 			throw new NotFoundException("Category with id = " + categoryId + " was not found");
+		}
+		if (eventRepository.countByCategoryId(categoryId) != 0) {
+			throw new ConditionsNotMetException("Cannot delete a category that isnt empty");
 		}
 		categoryRepository.deleteById(categoryId);
 	}

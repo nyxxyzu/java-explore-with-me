@@ -48,4 +48,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
 	List<Event> findByIdIn(List<Long> eventIds);
 
+	long countByCategoryId(long id);
+
 }

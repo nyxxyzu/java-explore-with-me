@@ -69,13 +69,16 @@ public class CompilationServiceImpl implements CompilationService {
 	}
 
 	@Override
-	public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
+	public List<CompilationDto> getCompilations(int from, int size) {
 		Pageable page = PageRequest.of(from, size);
-		if (pinned == null) {
-			return compilationRepository.findAll(page).stream()
-					.map(CompilationMapper::toCompilationDto)
-					.toList();
+		return compilationRepository.findAll(page).stream()
+				.map(CompilationMapper::toCompilationDto)
+				.toList();
 		}
+
+	@Override
+	public List<CompilationDto> getCompilationsPinned(Boolean pinned, int from, int size) {
+		Pageable page = PageRequest.of(from, size);
 		return compilationRepository.findByPinnedIs(pinned, page).stream()
 				.map(CompilationMapper::toCompilationDto)
 				.toList();
