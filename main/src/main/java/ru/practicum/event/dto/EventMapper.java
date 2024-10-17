@@ -2,10 +2,13 @@ package ru.practicum.event.dto;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.category.dto.CategoryMapper;
-import ru.practicum.event.ParticipationRequest;
+import ru.practicum.event.dto.comment.CommentDto;
+import ru.practicum.event.dto.comment.NewCommentDto;
+import ru.practicum.event.model.Comment;
+import ru.practicum.event.model.ParticipationRequest;
 import ru.practicum.event.dto.request.ParticipationRequestDto;
-import ru.practicum.event.Event;
-import ru.practicum.event.Location;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.model.Location;
 import ru.practicum.event.dto.event.EventDto;
 import ru.practicum.event.dto.event.EventShortDto;
 import ru.practicum.event.dto.event.NewEventRequestDto;
@@ -33,6 +36,9 @@ public class EventMapper {
 		dto.setTitle(event.getTitle());
 		dto.setViews(event.getViews());
 		dto.setState(event.getState());
+		dto.setComments(event.getComments() != null ? event.getComments().stream()
+				.map(EventMapper::toCommentDto)
+				.toList() : null);
 		return dto;
 	}
 
@@ -83,6 +89,21 @@ public class EventMapper {
 		dto.setRequester(request.getRequester() != null ? request.getRequester().getId() : null);
 		dto.setId(request.getId());
 		dto.setEvent(request.getEvent() != null ? request.getEvent().getId() : null);
+		return dto;
+	}
+
+	public Comment toComment(NewCommentDto dto) {
+		Comment comment = new Comment();
+		comment.setText(dto.getText());
+		return comment;
+	}
+
+	public CommentDto toCommentDto(Comment comment) {
+		CommentDto dto = new CommentDto();
+		dto.setText(comment.getText());
+		dto.setPosted(comment.getPosted());
+		dto.setId(comment.getId());
+		dto.setPoster(comment.getPoster() != null ? UserMapper.toUserShortDto(comment.getPoster()) : null);
 		return dto;
 	}
 }

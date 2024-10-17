@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.CategoryMapper;
 import ru.practicum.category.dto.NewCategoryRequestDto;
-import ru.practicum.event.EventRepository;
+import ru.practicum.event.repositories.EventRepository;
 import ru.practicum.exception.ConditionsNotMetException;
 import ru.practicum.exception.NotFoundException;
 

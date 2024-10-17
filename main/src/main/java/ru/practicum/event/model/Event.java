@@ -1,4 +1,4 @@
-package ru.practicum.event;
+package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,9 +11,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -24,9 +26,12 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.category.Category;
 import ru.practicum.enums.State;
+import ru.practicum.event.model.Location;
 import ru.practicum.user.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,6 +44,7 @@ import java.time.LocalDateTime;
 				@NamedAttributeNode("category"),
 				@NamedAttributeNode("initiator"),
 				@NamedAttributeNode("location"),
+				@NamedAttributeNode("comments")
 		}
 )
 @Entity
@@ -82,5 +88,11 @@ public class Event {
 	private Long views;
 	@Enumerated(value = EnumType.STRING)
 	private State state;
+	@OneToMany(fetch = FetchType.LAZY)
+	@ToString.Exclude
+	@JoinTable(name = "event_comment",
+			joinColumns = { @JoinColumn(name = "event_id")},
+			inverseJoinColumns = { @JoinColumn(name = "comment_id") })
+	private List<Comment> comments = new ArrayList<>();
 
 }

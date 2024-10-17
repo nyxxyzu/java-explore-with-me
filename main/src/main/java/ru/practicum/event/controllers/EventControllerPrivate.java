@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.event.EventServiceImpl;
+import ru.practicum.event.dto.comment.CommentDto;
+import ru.practicum.event.dto.comment.NewCommentDto;
 import ru.practicum.event.dto.event.EventDto;
 import ru.practicum.event.dto.event.EventShortDto;
 import ru.practicum.event.dto.event.NewEventRequestDto;
@@ -99,5 +102,37 @@ public class EventControllerPrivate {
 												 @PathVariable("requestId") Long requestId) {
 		log.info("Canceled request {}", requestId);
 		return eventService.cancelRequest(userId, requestId);
+	}
+
+	@PostMapping("/events/{eventId}/comments")
+	public CommentDto postComment(@Valid @RequestBody NewCommentDto dto,
+										  @PathVariable("userId") Long userId,
+										  @PathVariable("eventId") Long eventId) {
+		CommentDto comment = eventService.postComment(dto, userId, eventId);
+		log.info("Left a comment {}", comment);
+		return comment;
+	}
+
+	@PatchMapping("/comments/{commentId}")
+	public CommentDto editComment(@Valid @RequestBody NewCommentDto dto,
+								   @PathVariable("userId") Long userId,
+								   @PathVariable("commentId") Long commentId) {
+		CommentDto comment = eventService.editComment(dto, userId, commentId);
+		log.info("Edited a comment {} with data from {}", commentId, dto);
+		return comment;
+	}
+
+	@DeleteMapping("/events/{eventId}/comments/{commentId}")
+	public void deleteCommentUser(@PathVariable("userId") Long userId,
+								  @PathVariable("eventId") Long eventId,
+								  @PathVariable("commentId") Long commentId) {
+		log.info("Deleted comment {}", commentId);
+		eventService.deleteCommentUser(userId, eventId, commentId);
+	}
+
+	@GetMapping("/events/{eventId}/comments")
+	public List<CommentDto> getCommentsForUserEvent(@PathVariable("userId") Long userId,
+													@PathVariable("eventId") Long eventId) {
+		return eventService.getCommentsForUserEvent(userId, eventId);
 	}
 }
