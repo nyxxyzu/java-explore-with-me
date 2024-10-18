@@ -25,8 +25,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.category.Category;
+import ru.practicum.comment.Comment;
 import ru.practicum.enums.State;
-import ru.practicum.event.model.Location;
 import ru.practicum.user.User;
 
 import java.time.LocalDateTime;

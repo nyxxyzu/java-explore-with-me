@@ -2,9 +2,7 @@ package ru.practicum.event.dto;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.category.dto.CategoryMapper;
-import ru.practicum.event.dto.comment.CommentDto;
-import ru.practicum.event.dto.comment.NewCommentDto;
-import ru.practicum.event.model.Comment;
+import ru.practicum.comment.dto.CommentMapper;
 import ru.practicum.event.model.ParticipationRequest;
 import ru.practicum.event.dto.request.ParticipationRequestDto;
 import ru.practicum.event.model.Event;
@@ -37,7 +35,7 @@ public class EventMapper {
 		dto.setViews(event.getViews());
 		dto.setState(event.getState());
 		dto.setComments(event.getComments() != null ? event.getComments().stream()
-				.map(EventMapper::toCommentDto)
+				.map(CommentMapper::toCommentDto)
 				.toList() : null);
 		return dto;
 	}
@@ -92,18 +90,4 @@ public class EventMapper {
 		return dto;
 	}
 
-	public Comment toComment(NewCommentDto dto) {
-		Comment comment = new Comment();
-		comment.setText(dto.getText());
-		return comment;
-	}
-
-	public CommentDto toCommentDto(Comment comment) {
-		CommentDto dto = new CommentDto();
-		dto.setText(comment.getText());
-		dto.setPosted(comment.getPosted());
-		dto.setId(comment.getId());
-		dto.setPoster(comment.getPoster() != null ? UserMapper.toUserShortDto(comment.getPoster()) : null);
-		return dto;
-	}
 }
