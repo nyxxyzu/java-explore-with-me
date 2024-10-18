@@ -1,4 +1,4 @@
-package ru.practicum.event;
+package ru.practicum.event.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.enums.RequestStatus;
+import ru.practicum.event.model.Event;
 import ru.practicum.user.User;
 
 import java.time.LocalDateTime;

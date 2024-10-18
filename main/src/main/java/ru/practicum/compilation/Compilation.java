@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.event.Event;
+import ru.practicum.event.model.Event;
 
 import java.util.List;
 

@@ -10,8 +10,8 @@ import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.CompilationMapper;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequestDto;
-import ru.practicum.event.Event;
-import ru.practicum.event.EventRepository;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.repositories.EventRepository;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.List;

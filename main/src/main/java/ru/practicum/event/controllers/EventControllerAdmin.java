@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.event.EventServiceImpl;
+
 import ru.practicum.event.dto.event.UpdateEventAdminRequestDto;
 import ru.practicum.event.dto.event.EventDto;
 
@@ -50,9 +51,4 @@ public class EventControllerAdmin {
 		log.info("Updated event by id of " + eventId + " with data from " + request.toString());
 		return updatedEvent;
 	}
-
-
-
-
-
 }
